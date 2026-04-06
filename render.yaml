@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: raaya-india-api
+    env: python
+    plan: starter
+    healthCheckPath: /api/v1/docs/
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 120
+    autoDeploy: true
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "api.raayaindia.com"
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+      - key: SECURE_HSTS_SECONDS
+        value: "31536000"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://raayaindia.com,https://www.raayaindia.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://raayaindia.com,https://www.raayaindia.com,https://api.raayaindia.com"

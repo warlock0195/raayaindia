@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0b0b0b;
+  background: #f5f5f0;
+}
+
+body {
+  @apply bg-raayaIvory text-raayaBlack font-sans antialiased;
+}
+
+@layer components {
+  .section-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-10;
+  }
+
+  .raaya-button {
+    @apply inline-flex items-center justify-center rounded-none bg-raayaBlack px-6 py-3 text-sm font-medium tracking-wider text-raayaIvory transition-all duration-300 hover:bg-raayaGold hover:text-raayaBlack;
+  }
+
+  .raaya-outline-button {
+    @apply inline-flex items-center justify-center rounded-none border border-raayaBlack px-6 py-3 text-sm font-medium tracking-wider text-raayaBlack transition-all duration-300 hover:border-raayaGold hover:text-raayaGold;
+  }
+
+  .luxury-card {
+    @apply border border-black/10 bg-white/70 shadow-luxe backdrop-blur-sm;
+  }
+}
