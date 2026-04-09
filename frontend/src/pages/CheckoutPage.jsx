@@ -19,6 +19,12 @@ const CheckoutPage = () => {
   const [placingOrder, setPlacingOrder] = useState(false);
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [customer, setCustomer] = useState({
+    full_name: "",
+    phone_number: "",
+    email: "",
+    order_note: "Our team will contact you for payment confirmation and delivery details.",
+  });
 
   const [form, setForm] = useState({
     line1: "",
@@ -67,6 +73,16 @@ const CheckoutPage = () => {
       const order = await orderApi.checkout({
         shipping_address_id: Number(shippingAddressId),
         payment_method: paymentMethod,
+        full_name: customer.full_name,
+        phone_number: customer.phone_number,
+        email: customer.email,
+        address_line_1: form.line1,
+        address_line_2: form.line2,
+        city: form.city,
+        state: form.state,
+        country: form.country,
+        postal_code: form.postal_code,
+        order_note: customer.order_note,
       });
 
       trackEvent({
@@ -150,6 +166,29 @@ const CheckoutPage = () => {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
         <form onSubmit={placeOrder} className="luxury-card space-y-4 p-6">
+          <p className="text-xs uppercase tracking-[0.25em] text-raayaGold">Customer Details</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              className="border border-black/20 bg-transparent px-3 py-3 text-sm"
+              placeholder="Full name"
+              value={customer.full_name}
+              onChange={(e) => setCustomer((p) => ({ ...p, full_name: e.target.value }))}
+            />
+            <input
+              className="border border-black/20 bg-transparent px-3 py-3 text-sm"
+              placeholder="Phone number"
+              value={customer.phone_number}
+              onChange={(e) => setCustomer((p) => ({ ...p, phone_number: e.target.value }))}
+            />
+            <input
+              className="border border-black/20 bg-transparent px-3 py-3 text-sm sm:col-span-2"
+              placeholder="Email"
+              type="email"
+              value={customer.email}
+              onChange={(e) => setCustomer((p) => ({ ...p, email: e.target.value }))}
+            />
+          </div>
+
           <p className="text-xs uppercase tracking-[0.25em] text-raayaGold">Shipping Address</p>
 
           {addresses.length ? (
@@ -204,6 +243,12 @@ const CheckoutPage = () => {
               />
             </div>
           )}
+          <textarea
+            className="min-h-24 w-full border border-black/20 bg-transparent px-3 py-3 text-sm"
+            placeholder="Order note"
+            value={customer.order_note}
+            onChange={(e) => setCustomer((p) => ({ ...p, order_note: e.target.value }))}
+          />
 
           <p className="pt-2 text-xs uppercase tracking-[0.25em] text-raayaGold">Payment Method</p>
           <div className="grid gap-2 sm:grid-cols-2">

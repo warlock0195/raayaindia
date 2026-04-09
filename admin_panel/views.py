@@ -10,10 +10,17 @@ from core.marketing import get_abandoned_cart_candidates, send_abandoned_cart_re
 from core.permissions import IsAdminRole
 from orders.models import Order
 from orders.models import OrderItem
-from products.models import Product
+from products.models import Collection, Product
 
-from .models import AbandonedCart
-from .serializers import AbandonedCartReminderSerializer, AnalyticsTrackSerializer
+from .models import AbandonedCart, HeroBanner, HomeSection, SiteSettings
+from .serializers import (
+    AbandonedCartReminderSerializer,
+    AnalyticsTrackSerializer,
+    CollectionSerializer,
+    HeroBannerSerializer,
+    HomeSectionSerializer,
+    SiteSettingsSerializer,
+)
 
 
 class DashboardStatsView(APIView):
@@ -186,3 +193,21 @@ class TriggerAbandonedCartReminderView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class HomepageCMSView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        hero_banner = HeroBanner.objects.filter(is_active=True).order_by("-updated_at").first()
+        sections = HomeSection.objects.filter(is_active=True).order_by("order", "id")
+        collections = Collection.objects.filter(is_active=True).order_by("name")
+        site_settings = SiteSettings.objects.order_by("-updated_at").first()
+
+        data = {
+            "hero_banner": HeroBannerSerializer(hero_banner).data if hero_banner else None,
+            "sections": HomeSectionSerializer(sections, many=True).data,
+            "collections": CollectionSerializer(collections, many=True).data,
+            "site_settings": SiteSettingsSerializer(site_settings).data if site_settings else None,
+        }
+        return Response(data, status=status.HTTP_200_OK)

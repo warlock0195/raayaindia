@@ -14,7 +14,7 @@ from .serializers import ProductDetailSerializer, ProductListSerializer, Product
 class ProductListView(generics.ListAPIView):
     serializer_class = ProductListSerializer
     permission_classes = [permissions.AllowAny]
-    filterset_fields = ["category", "subcategory", "brand", "is_active", "vendor"]
+    filterset_fields = ["category", "subcategory", "collection", "brand", "is_active", "vendor"]
     search_fields = ["name", "description", "tags"]
     ordering_fields = ["created_at", "price"]
 
@@ -25,7 +25,7 @@ class ProductListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = (
             Product.objects.filter(is_active=True)
-            .select_related("category", "subcategory", "vendor")
+            .select_related("category", "subcategory", "collection", "vendor")
             .prefetch_related("images", "variants")
         )
 
@@ -54,7 +54,7 @@ class ProductDetailView(generics.RetrieveAPIView):
     def get_queryset(self):
         return (
             Product.objects.filter(is_active=True)
-            .select_related("category", "subcategory", "vendor")
+            .select_related("category", "subcategory", "collection", "vendor")
             .prefetch_related("images", "variants")
         )
 

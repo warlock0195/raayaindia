@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Product, ProductImage, ProductVariant
+from .models import Collection, Product, ProductImage, ProductVariant
 
 
 class StockAvailabilityFilter(admin.SimpleListFilter):
@@ -65,12 +65,49 @@ class ProductVariantInline(admin.TabularInline):
     extra = 1
 
 
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    list_display = ("name", "image_preview", "is_active", "created_at")
+    list_filter = ("is_active", "created_at")
+    search_fields = ("name", "description")
+    list_editable = ("is_active",)
+    readonly_fields = ("image_preview", "created_at")
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height: 64px; width: 64px; object-fit: cover; border: 1px solid #ddd;" />',
+                obj.image.url,
+            )
+        return "No image"
+
+    image_preview.short_description = "Image"
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "image_preview", "vendor", "category", "price", "stock_quantity", "is_active")
-    list_filter = ("is_active", "category", "brand", "vendor", StockAvailabilityFilter, PriceBandFilter)
+    list_display = (
+        "name",
+        "image_preview",
+        "vendor",
+        "category",
+        "collection",
+        "price",
+        "stock_quantity",
+        "is_active",
+    )
+    list_filter = (
+        "is_active",
+        "category",
+        "collection",
+        "brand",
+        "vendor",
+        StockAvailabilityFilter,
+        PriceBandFilter,
+    )
     search_fields = ("name", "sku", "tags", "brand")
     prepopulated_fields = {"slug": ("name",)}
+    list_editable = ("is_active", "collection")
     inlines = [ProductImageInline, ProductVariantInline]
     actions = ["mark_active", "mark_inactive"]
 

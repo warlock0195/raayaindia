@@ -75,3 +75,62 @@ class AbandonedCart(models.Model):
 
     def __str__(self):
         return f"AbandonedCart<{self.user_id}>"
+
+
+class HeroBanner(models.Model):
+    title = models.CharField(max_length=255)
+    subtitle = models.TextField(blank=True)
+    image = models.ImageField(upload_to="homepage/hero/")
+    button_text = models.CharField(max_length=120, blank=True)
+    button_link = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        indexes = [models.Index(fields=["is_active", "updated_at"])]
+
+    def __str__(self):
+        return self.title
+
+
+class HomeSection(models.Model):
+    class SectionType(models.TextChoices):
+        COLLECTION = "collection", "Collection"
+        PROMOTIONAL = "promotional", "Promotional"
+        BANNER = "banner", "Banner"
+
+    title = models.CharField(max_length=255)
+    subtitle = models.TextField(blank=True)
+    image = models.ImageField(upload_to="homepage/sections/")
+    section_type = models.CharField(max_length=20, choices=SectionType.choices, default=SectionType.BANNER)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+    button_text = models.CharField(max_length=120, blank=True)
+    button_link = models.CharField(max_length=255, blank=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+        indexes = [models.Index(fields=["is_active", "order", "section_type"])]
+
+    def __str__(self):
+        return f"{self.title} ({self.section_type})"
+
+
+class SiteSettings(models.Model):
+    site_name = models.CharField(max_length=255, default="Raaya India")
+    logo = models.ImageField(upload_to="site/", blank=True, null=True)
+    footer_text = models.TextField(blank=True)
+    contact_email = models.EmailField(blank=True)
+    whatsapp_number = models.CharField(max_length=30, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Site Settings"
+        verbose_name_plural = "Site Settings"
+
+    def __str__(self):
+        return self.site_name

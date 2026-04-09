@@ -2,7 +2,7 @@
 
 ## 1) Prerequisites
 - GitHub repo with both backend and frontend code
-- MySQL database (Railway/Render managed DB or external)
+- PostgreSQL database (Render managed DB or external)
 - Razorpay live keys
 - Domain: `raayaindia.com`
 
@@ -16,11 +16,7 @@ Set these variables in your backend hosting dashboard:
 - `SECRET_KEY`
 - `DEBUG=False`
 - `ALLOWED_HOSTS=api.raayaindia.com,<render-or-railway-host>`
-- `MYSQL_DB`
-- `MYSQL_USER`
-- `MYSQL_PASSWORD`
-- `MYSQL_HOST`
-- `MYSQL_PORT`
+- `DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db_name>`
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
 - `REDIS_URL` (optional but recommended)

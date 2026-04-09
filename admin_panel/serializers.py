@@ -1,5 +1,9 @@
 from rest_framework import serializers
 
+from products.models import Collection
+
+from .models import HeroBanner, HomeSection, SiteSettings
+
 
 class DashboardStatsSerializer(serializers.Serializer):
     total_orders = serializers.IntegerField()
@@ -26,3 +30,43 @@ class AdminInsightsSerializer(serializers.Serializer):
 
 class AbandonedCartReminderSerializer(serializers.Serializer):
     hours = serializers.IntegerField(default=2, min_value=1, max_value=72)
+
+
+class HeroBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HeroBanner
+        fields = ["id", "title", "subtitle", "image", "button_text", "button_link"]
+
+
+class HomeSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomeSection
+        fields = [
+            "id",
+            "title",
+            "subtitle",
+            "image",
+            "section_type",
+            "order",
+            "button_text",
+            "button_link",
+        ]
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ["id", "name", "description", "image"]
+
+
+class SiteSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteSettings
+        fields = ["site_name", "logo", "footer_text", "contact_email", "whatsapp_number"]
+
+
+class HomepageCMSResponseSerializer(serializers.Serializer):
+    hero_banner = HeroBannerSerializer(allow_null=True)
+    sections = HomeSectionSerializer(many=True)
+    collections = CollectionSerializer(many=True)
+    site_settings = SiteSettingsSerializer(allow_null=True)

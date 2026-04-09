@@ -21,6 +21,16 @@ class Order(models.Model):
 
     user = models.ForeignKey("users.User", on_delete=models.PROTECT, related_name="orders")
     shipping_address = models.ForeignKey("users.Address", on_delete=models.PROTECT, related_name="orders")
+    full_name = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=30, blank=True)
+    email = models.EmailField(blank=True)
+    address_line_1 = models.CharField(max_length=255, blank=True)
+    address_line_2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=120, blank=True)
+    state = models.CharField(max_length=120, blank=True)
+    country = models.CharField(max_length=120, blank=True)
+    postal_code = models.CharField(max_length=20, blank=True)
+    order_note = models.TextField(blank=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)])
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices, default=PaymentMethod.COD)
     payment_status = models.CharField(
@@ -39,6 +49,7 @@ class Order(models.Model):
             models.Index(fields=["user", "created_at"]),
             models.Index(fields=["status"]),
             models.Index(fields=["payment_status"]),
+            models.Index(fields=["city", "created_at"]),
         ]
 
     def __str__(self):

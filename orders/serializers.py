@@ -28,6 +28,16 @@ class OrderSerializer(serializers.ModelSerializer):
             "id",
             "total_amount",
             "shipping_address",
+            "full_name",
+            "phone_number",
+            "email",
+            "address_line_1",
+            "address_line_2",
+            "city",
+            "state",
+            "country",
+            "postal_code",
+            "order_note",
             "payment_method",
             "payment_status",
             "status",
@@ -57,6 +67,16 @@ class OrderSerializer(serializers.ModelSerializer):
 class CheckoutSerializer(serializers.Serializer):
     shipping_address_id = serializers.IntegerField()
     payment_method = serializers.ChoiceField(choices=Order.PaymentMethod.choices, default=Order.PaymentMethod.COD)
+    full_name = serializers.CharField(required=False, allow_blank=True)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
+    address_line_1 = serializers.CharField(required=False, allow_blank=True)
+    address_line_2 = serializers.CharField(required=False, allow_blank=True)
+    city = serializers.CharField(required=False, allow_blank=True)
+    state = serializers.CharField(required=False, allow_blank=True)
+    country = serializers.CharField(required=False, allow_blank=True)
+    postal_code = serializers.CharField(required=False, allow_blank=True)
+    order_note = serializers.CharField(required=False, allow_blank=True)
 
     def validate_shipping_address_id(self, value):
         user = self.context["request"].user
@@ -114,9 +134,21 @@ class CheckoutSerializer(serializers.Serializer):
                 )
             )
 
+        address = Address.objects.get(id=validated_data["shipping_address_id"], user=user)
         order = Order.objects.create(
             user=user,
             shipping_address_id=validated_data["shipping_address_id"],
+            full_name=validated_data.get("full_name") or user.name,
+            phone_number=validated_data.get("phone_number") or user.phone_number,
+            email=validated_data.get("email") or user.email,
+            address_line_1=validated_data.get("address_line_1") or address.line1,
+            address_line_2=validated_data.get("address_line_2") or address.line2,
+            city=validated_data.get("city") or address.city,
+            state=validated_data.get("state") or address.state,
+            country=validated_data.get("country") or address.country,
+            postal_code=validated_data.get("postal_code") or address.postal_code,
+            order_note=validated_data.get("order_note")
+            or "Our team will contact you for payment confirmation and delivery details.",
             total_amount=total,
             payment_method=validated_data["payment_method"],
             payment_status=(

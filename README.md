@@ -17,7 +17,7 @@ Production-ready Django + DRF backend designed for a future multi-vendor marketp
 - Django
 - Django REST Framework
 - JWT auth (`djangorestframework-simplejwt`)
-- MySQL
+- PostgreSQL (`DATABASE_URL`)
 
 ## Setup
 1. Create virtual environment and activate it.
@@ -25,7 +25,7 @@ Production-ready Django + DRF backend designed for a future multi-vendor marketp
    - `pip install -r requirements.txt`
 3. Copy env file:
    - `cp .env.example .env`
-4. Update MySQL credentials in `.env`.
+4. Update `DATABASE_URL` and other environment values in `.env`.
 5. Run migrations:
    - `python manage.py makemigrations`
    - `python manage.py migrate`

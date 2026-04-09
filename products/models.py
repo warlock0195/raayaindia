@@ -2,9 +2,31 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 
+class Collection(models.Model):
+    name = models.CharField(max_length=180, unique=True)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to="collections/", blank=True, null=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["name"]
+        indexes = [models.Index(fields=["name", "is_active"])]
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     vendor = models.ForeignKey("vendors.Vendor", on_delete=models.PROTECT, related_name="products")
     category = models.ForeignKey("categories.Category", on_delete=models.PROTECT, related_name="products")
+    collection = models.ForeignKey(
+        "products.Collection",
+        on_delete=models.SET_NULL,
+        related_name="products",
+        null=True,
+        blank=True,
+    )
     subcategory = models.ForeignKey(
         "categories.Category",
         on_delete=models.PROTECT,
@@ -21,6 +43,9 @@ class Product(models.Model):
     sku = models.CharField(max_length=120, unique=True)
     tags = models.CharField(max_length=255, blank=True)
     brand = models.CharField(max_length=120, db_index=True)
+    fabric = models.CharField(max_length=180, blank=True)
+    care_instructions = models.TextField(blank=True)
+    delivery_time = models.CharField(max_length=120, blank=True)
     is_active = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -32,6 +57,7 @@ class Product(models.Model):
             models.Index(fields=["slug"]),
             models.Index(fields=["sku"]),
             models.Index(fields=["category", "is_active"]),
+            models.Index(fields=["collection", "is_active"]),
             models.Index(fields=["price"]),
             models.Index(fields=["brand"]),
         ]

@@ -18,6 +18,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 class ProductListSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     vendor_name = serializers.CharField(source="vendor.store_name", read_only=True)
+    collection_name = serializers.CharField(source="collection.name", read_only=True)
+    images = ProductImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -32,7 +34,10 @@ class ProductListSerializer(serializers.ModelSerializer):
             "brand",
             "tags",
             "category_name",
+            "collection",
+            "collection_name",
             "vendor_name",
+            "images",
             "is_active",
             "created_at",
         ]
@@ -44,6 +49,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source="category.name", read_only=True)
     subcategory_name = serializers.CharField(source="subcategory.name", read_only=True)
     vendor_name = serializers.CharField(source="vendor.store_name", read_only=True)
+    collection_name = serializers.CharField(source="collection.name", read_only=True)
 
     class Meta:
         model = Product
@@ -63,8 +69,13 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "category_name",
             "subcategory",
             "subcategory_name",
+            "collection",
+            "collection_name",
             "vendor",
             "vendor_name",
+            "fabric",
+            "care_instructions",
+            "delivery_time",
             "is_active",
             "images",
             "variants",
@@ -89,6 +100,10 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "brand",
             "category",
             "subcategory",
+            "collection",
+            "fabric",
+            "care_instructions",
+            "delivery_time",
             "is_active",
         ]
         read_only_fields = ["id"]

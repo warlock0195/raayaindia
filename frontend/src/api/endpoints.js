@@ -37,6 +37,10 @@ export const analyticsApi = {
   track: async (payload) => unwrap(await api.post("/admin-panel/analytics/track/", payload)),
 };
 
+export const homepageApi = {
+  content: async () => unwrap(await api.get("/admin-panel/homepage/")),
+};
+
 export const reviewApi = {
   listByProduct: async (productId) => unwrap(await api.get(`/reviews/product/${productId}/`)),
   create: async (payload) => unwrap(await api.post("/reviews/", payload)),
