@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -69,14 +70,13 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-import dj_database_url
-import os
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
+        default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
-        ssl_require=False
+        ssl_require=bool(DATABASE_URL),
     )
 }
 
@@ -221,3 +221,19 @@ LOGGING = {
         "payments": {"handlers": ["console"], "level": "INFO", "propagate": False},
     },
 }
+
+if "runserver" not in sys.argv:
+    try:
+        from django.db.models.signals import post_migrate
+
+        def _create_render_superuser(sender, **kwargs):
+            try:
+                import create_superuser
+
+                create_superuser.create_superuser()
+            except Exception as exc:
+                print(f"Superuser creation skipped: {exc}")
+
+        post_migrate.connect(_create_render_superuser, dispatch_uid="render_auto_superuser")
+    except Exception as exc:
+        print(f"Superuser creation hook skipped: {exc}")

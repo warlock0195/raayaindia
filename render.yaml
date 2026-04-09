@@ -4,7 +4,7 @@ services:
     env: python
     plan: starter
     healthCheckPath: /api/v1/docs/
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 120
     autoDeploy: true
     envVars:
